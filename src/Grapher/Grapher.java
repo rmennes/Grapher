@@ -71,14 +71,15 @@ public class Grapher {
 		m_setTitle.add(title);
 	}
 	
-	public boolean printLineChart(String file, int width, int height) throws Exception{
-		double[][] data = toPrimitiveArray(m_data);
-		double[] xas = toPrimitiveDouble(m_xasis);
+	public boolean printLineChart(String file, int width, int height, String xTitle, String yTitle) throws Exception{
+		double[][] data = Calculator.toPrimitiveArray(m_data);
+		double[] xas = Calculator.toPrimitiveDouble(m_xasis);
 		String[] setTitle = toPrimitiveString(m_setTitle);
 		
 		DefaultChartDataModel model = new DefaultChartDataModel(data,
 				xas, setTitle);
-		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y);
+		model.setAutoScale(true);
+		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y, xTitle, yTitle);
 		LineChartRenderer lc = new LineChartRenderer(c.getCoordSystem(), model);
 		lc.setRowColorModel(new RowColorModel(model));
 		c.addChartRenderer(lc, 1);
@@ -90,14 +91,15 @@ public class Grapher {
 		
 	}
 	
-	public boolean printInterpolatingChart(String file, int width, int height) throws Exception{
-		double[][] data = toPrimitiveArray(m_data);
-		double[] xas = toPrimitiveDouble(m_xasis);
+	public boolean printInterpolatingChart(String file, int width, int height, String xTitle, String yTitle) throws Exception{
+		double[][] data = Calculator.toPrimitiveArray(m_data);
+		double[] xas = Calculator.toPrimitiveDouble(m_xasis);
 		String[] setTitle = toPrimitiveString(m_setTitle);
 		
 		DefaultChartDataModel model = new DefaultChartDataModel(data,
 				xas, setTitle);
-		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y);
+		model.setAutoScale(true);
+		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y, xTitle, yTitle);
 		InterpolationChartRenderer ipr = new InterpolationChartRenderer(c.getCoordSystem(), model);
 		ipr.setRowColorModel(new RowColorModel(model));
 		c.addChartRenderer(ipr, 1);
@@ -107,31 +109,6 @@ public class Grapher {
 		
 		return true;
 		
-	}
-	
-	private double[][] toPrimitiveArray(ArrayList<Vector<Double>> m_data2){
-		if(m_data2.isEmpty()) return new double[0][0];
-		Iterator<Vector<Double>> it = m_data2.iterator();
-		double[][] result = new double[m_data2.size()][];
-		int i = 0;
-		while(it.hasNext()){
-			Collection<Double> temp = it.next();
-			result[i] = toPrimitiveDouble(temp);
-			i++;
-		}
-		
-		return result;
-	}
-	
-	private double[] toPrimitiveDouble(Collection<Double> input){
-		double[] result = new double[input.size()];
-		Iterator<Double> it = input.iterator();
-		int i = 0;
-		while(it.hasNext()){
-			result[i] = it.next().doubleValue();
-			i++;
-		}
-		return result;
 	}
 	
 	private String[] toPrimitiveString(Collection<String> input){
