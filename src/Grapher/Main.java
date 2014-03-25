@@ -15,23 +15,41 @@ public class Main {
 		Grapher g = new Grapher(title);
 		String yName = "";
 		boolean first = true;
+		System.out.println("=== Start parsing files ===");
 		for(int i = 0; i < files.length; i++){
 			Parser p = ParserFactory.getParser(value, files[i]);
-			Vector<Double> tempResults = p.Get();
 			if(first){
+				System.out.println("Parse timings");
 				g.SetXData(p.GetTimes());
 				yName = p.measure();
 				first = false;
 			}
+			System.out.println("Parse: " + files[i]);
+			String error = p.Error();
+			if(error != null){
+				System.err.println("Error detected in file: " + files[i] + "\n\t" + error);
+				continue;
+			}
+			Vector<Double> tempResults = p.Get();
 			results.add(tempResults);
 		}
+		System.out.println("=== Start calculator ===");
+		System.out.println("Calculate average");
 		Vector<Double> aver = Calculator.Average(results);
+		System.out.println("Calculate max");
 		Vector<Double> max = Calculator.Max(results);
+		System.out.println("Calculate min");
 		Vector<Double> min = Calculator.Min(results);
+		System.out.println("=== Generate Image ===");
+		System.out.println("Add average");
 		g.addSet("Average", aver);
+		System.out.println("Add max");
 		g.addSet("Max", max);
+		System.out.println("Add min");
 		g.addSet("Min", min);
+		System.out.println("Print Chart");
 		g.printLineChart(file, 640, 480, "s", yName);
+		System.out.println("=== Generated file: " + file);
 	}
 	
 	public static void makeLinePNG(String[][] files, String value, String title, String file) throws Exception{
@@ -39,9 +57,11 @@ public class Main {
 		Grapher g = new Grapher(title);
 		String yName = "";
 		boolean first = true;
+		System.out.println("=== Start parsing files ===");
 		for(int i = 0; i < files.length; i++){
 			ArrayList<Vector<Double>> tempArray = new ArrayList<Vector<Double>>();
 			for(int j = 0; j < files[i].length; j++){
+				System.out.println("Parse: " + files[i]);
 				Parser p = ParserFactory.getParser(value, files[i][j]);
 				Vector<Double> tempResults = p.Get();
 				if(first){
@@ -53,15 +73,20 @@ public class Main {
 			}
 			results.add(tempArray);
 		}
+		System.out.println("=== Start calculator ===");
 		Iterator<ArrayList<Vector<Double>>> it = results.iterator();
 		int i = 0;
 		while(it.hasNext()){
 			ArrayList<Vector<Double>> tempArray = it.next();
+			int percent = i / results.size();
+			System.out.println("Calculate average (" + Integer.toString(percent) + "%)");
 			Vector<Double> aver = Calculator.Average(tempArray);
 			g.addSet("Data " + Integer.toString(i), aver);
 			i++;
 		}
+		System.out.println("=== Generate Image ===");
 		g.printLineChart(file, 640, 480, "s", yName);
+		System.out.println("=== Generated file: " + file);
 	}
 
 	public static void main(String[] args) {

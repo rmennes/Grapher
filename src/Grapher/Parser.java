@@ -20,6 +20,11 @@ public abstract class Parser {
 		m_data = (JSONObject) parser.parse(new FileInputStream(new File(file)));
 	}
 	
+	public String Error(){
+		String output = (String) m_data.get("error");
+		return output;
+	}
+	
 	public abstract Vector<Double> Get();
 	
 	public abstract double Summary();

@@ -75,7 +75,7 @@ public class Grapher {
 		double[][] data = Calculator.toPrimitiveArray(m_data);
 		double[] xas = Calculator.toPrimitiveDouble(m_xasis);
 		String[] setTitle = toPrimitiveString(m_setTitle);
-		
+		System.out.println("Start modelling");
 		DefaultChartDataModel model = new DefaultChartDataModel(data,
 				xas, setTitle);
 		model.setAutoScale(true);
@@ -84,8 +84,9 @@ public class Grapher {
 		lc.setRowColorModel(new RowColorModel(model));
 		c.addChartRenderer(lc, 1);
 		c.setBounds(new Rectangle(0, 0, width, height));
-		
+		System.out.println("Create PNG");
 		ChartEncoder.createPNG(new FileOutputStream(file), c);
+		//ChartEncoder.
 		
 		return true;
 		

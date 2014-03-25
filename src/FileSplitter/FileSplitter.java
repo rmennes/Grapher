@@ -29,7 +29,7 @@ public class FileSplitter {
 			}
 			output.write(content);
 			if(open == 0){
-				System.out.println("0");
+				output.write((int)'\n');
 				output.close();
 				file++;
 				output = new FileOutputStream(new File(dir + "/" + splitName + Integer.toString(file) + ".json"));
@@ -43,7 +43,7 @@ public class FileSplitter {
 	
 	public static void main(String[] args) {
 		try{
-			SplitFile("testJSON2/udpServer.json", "newFolder");
+			SplitFile(args[0], args[1]);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
