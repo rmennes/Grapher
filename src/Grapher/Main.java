@@ -41,15 +41,15 @@ public class Main {
 		System.out.println("Calculate min");
 		Vector<Double> min = Calculator.Min(results);
 		System.out.println("=== Generate Image ===");
-		System.out.println("Add average");
-		g.addSet("Average", aver);
 		System.out.println("Add max");
 		g.addSet("Max", max);
 		System.out.println("Add min");
 		g.addSet("Min", min);
+		System.out.println("Add average");
+		g.addSet("Average", aver);
 		System.out.println("Print Chart");
-		g.printLineChart(file, 640, 480, "s", yName);
-		System.out.println("=== Generated file: " + file);
+		String url = g.getLineChartURL(625, 470, "s", yName);
+		System.out.println("=== Generated URL: " + url);
 	}
 	
 	public static void makeLinePNG(String[][] files, String value, String title, String file) throws Exception{
@@ -85,8 +85,8 @@ public class Main {
 			i++;
 		}
 		System.out.println("=== Generate Image ===");
-		g.printLineChart(file, 640, 480, "s", yName);
-		System.out.println("=== Generated file: " + file);
+		String url = g.getLineChartURL(625, 470, "s", yName);
+		System.out.println("=== Generated URL: " + url);
 	}
 
 	public static void main(String[] args) {
