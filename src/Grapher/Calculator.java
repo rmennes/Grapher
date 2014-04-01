@@ -24,6 +24,7 @@ public class Calculator {
 		}
 		for(int i = 0; i < result.length; i++){
 			result[i] = result[i]/(double)values.length;
+			System.out.println("At moment " +  Integer.toString(i) + " AVG = " + Double.toString(result[i]));
 		}
 		return toVector(result);
 	}
@@ -42,6 +43,10 @@ public class Calculator {
 			}
 		}
 		
+		for(int i = 0 ; i < result.length; i++){
+			System.out.println("At moment " +  Integer.toString(i) + " MAX = " + Double.toString(result[i]));
+		}
+		
 		return toVector(result);
 	}
 	
@@ -57,6 +62,10 @@ public class Calculator {
 					result[j] = values[i][j];
 				}
 			}
+		}
+		
+		for(int i = 0 ; i < result.length; i++){
+			System.out.println("At moment " +  Integer.toString(i) + " MIN = " + Double.toString(result[i]));
 		}
 		
 		return toVector(result);
