@@ -23,7 +23,7 @@ import com.googlecode.charts4j.XYLineChart;
 
 public class Grapher {
 	
-	final Color[]	m_colors = {Color.LAVENDER, Color.TOMATO,
+	final Color[]	m_colors = {Color.GREEN, Color.TOMATO,
 			Color.GOLD};
 
 	ArrayList<Data>			 	m_data;

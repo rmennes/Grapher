@@ -2,7 +2,9 @@ package Grapher;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -50,6 +52,9 @@ public class Main {
 		System.out.println("Print Chart");
 		String url = g.getLineChartURL(625, 470, "s", yName);
 		System.out.println("=== Generated URL: " + url);
+		PrintWriter writer = new PrintWriter(file, "UTF-8");
+		writer.println(url);
+		writer.close();
 	}
 	
 	public static void makeLinePNG(String[][] files, String value, String title, String file) throws Exception{
