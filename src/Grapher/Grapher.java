@@ -22,7 +22,7 @@ import com.googlecode.charts4j.XYLine;
 import com.googlecode.charts4j.XYLineChart;
 
 public class Grapher {
-	
+	final int maxCount = 10;
 	final Color[]	m_colors = {Color.GREEN, Color.TOMATO,
 			Color.GOLD};
 
@@ -65,26 +65,36 @@ public class Grapher {
 		maxX		= Double.NEGATIVE_INFINITY;
 		minX		= Double.POSITIVE_INFINITY;
 		
+		int count = 0;
 		Iterator<Double> it = xaxis.iterator();
-		while (it.hasNext()) {
+		while (it.hasNext() && count < maxCount) {
+			count++;
 			Double val = it.next();
 			if (val < minX) minX = val;
 			if (val > maxX) maxX = val;
 		}
-		m_xaxis = DataUtil.scale(xaxis);
+		m_xaxis = DataUtil.scale(xaxis.subList(0, maxCount));
 	}
 	
 	public void addSet(String title, List<Double> data) throws Exception{
 		if(data.size() != m_xaxis.getSize()) throw new Exception("Size data not equal to size x_as");
-		Data newData = DataUtil.scale(data);
-		m_data.add(newData);
-		m_legends.add(title);
-	
-		Iterator<Double> it = data.iterator();
-		while (it.hasNext()) {
-			Double val = it.next();
-			if (val < minY) minY = val;
-			if (val > maxY) maxY = val;
+		
+		Data newData = null;
+		try {
+			newData = DataUtil.scale(data.subList(0, maxCount));
+			m_data.add(newData);
+			m_legends.add(title);
+		
+			int count = 0;
+			Iterator<Double> it = data.iterator();
+			while (it.hasNext() && count < maxCount) {
+				count++;
+				Double val = it.next();
+				if (val < minY) minY = val;
+				if (val > maxY) maxY = val;
+			}
+		} catch (java.lang.IllegalArgumentException e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -22,7 +22,9 @@ public class Main {
 			Parser p = ParserFactory.getParser(value, files[i]);
 			if(first){
 				System.out.println("Parse timings");
-				g.SetXData(p.GetTimes());
+				Vector<Double> points = p.GetTimes();
+				points.setSize(10);
+				g.SetXData(points);
 				yName = p.measure();
 				first = false;
 			}
@@ -38,10 +40,13 @@ public class Main {
 		System.out.println("=== Start calculator ===");
 		System.out.println("Calculate average");
 		Vector<Double> aver = Calculator.Average(results);
+		aver.setSize(10);
 		System.out.println("Calculate max");
 		Vector<Double> max = Calculator.Max(results);
+		max.setSize(10);
 		System.out.println("Calculate min");
 		Vector<Double> min = Calculator.Min(results);
+		min.setSize(10);
 		System.out.println("=== Generate Image ===");
 		System.out.println("Add max");
 		g.addSet("Max", max);
