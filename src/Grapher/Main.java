@@ -20,6 +20,8 @@ public class Main {
 		System.out.println("=== Start parsing files ===");
 		for(int i = 0; i < files.length; i++){
 			Parser p = ParserFactory.getParser(value, files[i]);
+			if (p == null)
+				System.err.println("Parser was null.. wrong type?");
 			if(first){
 				System.out.println("Parse timings");
 				Vector<Double> points = p.GetTimes();
@@ -28,7 +30,7 @@ public class Main {
 				yName = p.measure();
 				first = false;
 			}
-			System.out.println("Parse: " + files[i]);
+			//System.out.println("Parse: " + files[i]);
 			String error = p.Error();
 			if(error != null){
 				System.err.println("Error detected in file: " + files[i] + "\n\t" + error);
