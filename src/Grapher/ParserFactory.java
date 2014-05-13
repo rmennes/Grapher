@@ -13,6 +13,7 @@ public class ParserFactory {
 		if(typeToCheck.equals("packet")) return new Packets(file);
 		if(typeToCheck.equals("packetloss")) return new PacketLoss(file);
 		if(typeToCheck.equals("lost")) return new Lost(file);
+		if(typeToCheck.equals("speed")) return new Speed(file);
 		return null;
 	}
 
