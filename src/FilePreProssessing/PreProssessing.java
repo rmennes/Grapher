@@ -47,6 +47,7 @@ public class PreProssessing {
 			File folder = new File(folderName);
 			File [] files = folder.listFiles();
 			for(int i = 0; i < files.length; ++i){
+				if(files[i].isDirectory())continue;
 				PreprocessFile(files[i]);
 			}
 		}catch(Exception e){
