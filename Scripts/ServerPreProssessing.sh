@@ -9,7 +9,7 @@ fi
 mkdir $output
 for size in "${sizes[@]}"
 do
-	name="$output/$size"
+	name="$output/${size}B"
 	mkdir $name
 done
 echo "Start Splitting the files"
