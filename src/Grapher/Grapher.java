@@ -113,21 +113,19 @@ public class Grapher {
 	
 	public String getLineChartURL(int width, int height, String xTitle, String yTitle) throws Exception {
 		// Manual scaling ftw
-		System.err.println("About to scale manually");
 		Iterator<List<Double>> it = m_sets.iterator();
 		while (it.hasNext()) {
-			System.out.println("Scaaaliiiing");
 			List<Double> oldData = it.next();
 			List<Double> newData = new ArrayList<Double>();
 			Iterator<Double> listIt = oldData.iterator();
 			while (listIt.hasNext()) {
-				Double scaledValue = ((listIt.next() - minY) / (maxY - minY)) * 100;
+				double scaleDown = maxX - minY == 0 ? maxX - minY : 1;
+				Double scaledValue = ((listIt.next() - minY) / scaleDown) * 100;
 				newData.add(scaledValue);
 			}
 			m_data.add(Data.newData(newData));
 		}
 		
-		System.err.println("About to plot");
 		Vector<Plot> plots = new Vector<Plot>();
 		for (int i = 0; i < m_data.size(); i++) {
 			Data data = m_data.get(i);
