@@ -119,9 +119,11 @@ public class Grapher {
 			List<Double> newData = new ArrayList<Double>();
 			Iterator<Double> listIt = oldData.iterator();
 			while (listIt.hasNext()) {
-				double scaleDown = maxX - minY == 0 ? maxX - minY : 1;
-				Double scaledValue = ((listIt.next() - minY) / scaleDown) * 100;
-				newData.add(scaledValue);
+				double scaleDown = (maxY - minY);
+				if (scaleDown != 0) {
+					Double scaledValue = ((listIt.next() - minY) / scaleDown) * 100;
+					newData.add(scaledValue);
+				}
 			}
 			m_data.add(Data.newData(newData));
 		}
