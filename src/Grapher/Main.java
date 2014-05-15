@@ -20,13 +20,17 @@ public class Main {
 		System.out.println("=== Start parsing files ===");
 		for(int i = 0; i < files.length; i++){
 			Parser p = ParserFactory.getParser(value, files[i]);
+			if (p == null)
+				System.err.println("Parser was null.. wrong type?");
 			if(first){
 				System.out.println("Parse timings");
-				g.SetXData(p.GetTimes());
+				Vector<Double> points = p.GetTimes();
+				points.setSize(10);
+				g.SetXData(points);
 				yName = p.measure();
 				first = false;
 			}
-			System.out.println("Parse: " + files[i]);
+			//System.out.println("Parse: " + files[i]);
 			String error = p.Error();
 			if(error != null){
 				System.err.println("Error detected in file: " + files[i] + "\n\t" + error);
@@ -38,10 +42,13 @@ public class Main {
 		System.out.println("=== Start calculator ===");
 		System.out.println("Calculate average");
 		Vector<Double> aver = Calculator.Average(results);
+		aver.setSize(10);
 		System.out.println("Calculate max");
 		Vector<Double> max = Calculator.Max(results);
+		max.setSize(10);
 		System.out.println("Calculate min");
 		Vector<Double> min = Calculator.Min(results);
+		min.setSize(10);
 		System.out.println("=== Generate Image ===");
 		System.out.println("Add max");
 		g.addSet("Max", max);

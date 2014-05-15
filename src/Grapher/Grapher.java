@@ -22,11 +22,12 @@ import com.googlecode.charts4j.XYLine;
 import com.googlecode.charts4j.XYLineChart;
 
 public class Grapher {
-	
+	final int maxCount = 10;
 	final Color[]	m_colors = {Color.GREEN, Color.TOMATO,
 			Color.GOLD};
 
 	ArrayList<Data>			 	m_data;
+	ArrayList<List<Double>>		m_sets;
 	ArrayList<String>			m_legends;
 	Data						m_xaxis;
 	String						m_title;
@@ -38,24 +39,28 @@ public class Grapher {
 	
 	public Grapher() {
 		m_data = new ArrayList<Data>();
+		m_sets = new ArrayList<List<Double>>();
 		m_legends = new ArrayList<String>();
 		m_title = "";
 	}
 	
 	public Grapher(String title){
 		m_data = new ArrayList<Data>();
+		m_sets = new ArrayList<List<Double>>();
 		m_legends = new ArrayList<String>();
 		m_title = title;
 	}
 	
 	public Grapher(Collection<Double> xasis){
 		m_data = new ArrayList<Data>();
+		m_sets = new ArrayList<List<Double>>();
 		m_legends = new ArrayList<String>();
 		m_title = "";
 	}
 	
 	public Grapher(String title, Collection<Double> xasis){
 		m_data = new ArrayList<Data>();
+		m_sets = new ArrayList<List<Double>>();
 		m_legends = new ArrayList<String>();
 		m_title = title;
 	}
@@ -65,30 +70,64 @@ public class Grapher {
 		maxX		= Double.NEGATIVE_INFINITY;
 		minX		= Double.POSITIVE_INFINITY;
 		
+		int count = 0;
 		Iterator<Double> it = xaxis.iterator();
 		while (it.hasNext()) {
+			count++;
 			Double val = it.next();
 			if (val < minX) minX = val;
 			if (val > maxX) maxX = val;
 		}
-		m_xaxis = DataUtil.scale(xaxis);
+		m_xaxis = DataUtil.scale(xaxis.subList(0, maxCount));
 	}
 	
 	public void addSet(String title, List<Double> data) throws Exception{
 		if(data.size() != m_xaxis.getSize()) throw new Exception("Size data not equal to size x_as");
-		Data newData = DataUtil.scale(data);
-		m_data.add(newData);
 		m_legends.add(title);
-	
+		m_sets.add(data);
 		Iterator<Double> it = data.iterator();
 		while (it.hasNext()) {
 			Double val = it.next();
 			if (val < minY) minY = val;
 			if (val > maxY) maxY = val;
 		}
+		/*
+		Data newData = null;
+		try {
+			newData = DataUtil.scale(data.subList(0, maxCount));
+			m_data.add(newData);
+			
+		
+			int count = 0;
+			Iterator<Double> it = data.iterator();
+			while (it.hasNext()) {
+				count++;
+				Double val = it.next();
+				if (val < minY) minY = val;
+				if (val > maxY) maxY = val;
+			}
+		} catch (java.lang.IllegalArgumentException e) {
+			e.printStackTrace();
+		}*/
 	}
 	
 	public String getLineChartURL(int width, int height, String xTitle, String yTitle) throws Exception {
+		// Manual scaling ftw
+		Iterator<List<Double>> it = m_sets.iterator();
+		while (it.hasNext()) {
+			List<Double> oldData = it.next();
+			List<Double> newData = new ArrayList<Double>();
+			Iterator<Double> listIt = oldData.iterator();
+			while (listIt.hasNext()) {
+				double scaleDown = (maxY - minY);
+				if (scaleDown != 0) {
+					Double scaledValue = ((listIt.next() - minY) / scaleDown) * 100;
+					newData.add(scaledValue);
+				}
+			}
+			m_data.add(Data.newData(newData));
+		}
+		
 		Vector<Plot> plots = new Vector<Plot>();
 		for (int i = 0; i < m_data.size(); i++) {
 			Data data = m_data.get(i);
@@ -117,56 +156,4 @@ public class Grapher {
 		chart.setTitle(m_title);
 		return chart.toURLString();
 	}
-	
-/*	public boolean printLineChart(String file, int width, int height, String xTitle, String yTitle) throws Exception{
-		double[][] data = Calculator.toPrimitiveArray(m_data);
-		double[] xas = Calculator.toPrimitiveDouble(m_xasis);
-		String[] setTitle = toPrimitiveString(m_setTitle);
-		System.out.println("Start modelling");
-		DefaultChartDataModel model = new DefaultChartDataModel(data,
-				xas, setTitle);
-		model.setAutoScale(true);
-		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y, xTitle, yTitle);
-		LineChartRenderer lc = new LineChartRenderer(c.getCoordSystem(), model);
-		lc.setRowColorModel(new RowColorModel(model));
-		c.addChartRenderer(lc, 1);
-		c.setBounds(new Rectangle(0, 0, width, height));
-		System.out.println("Create PNG");
-		ChartEncoder.createPNG(new FileOutputStream(file), c);
-		//ChartEncoder.
-		
-		return true;
-		
-	}*/
-	
-/*	public boolean printInterpolatingChart(String file, int width, int height, String xTitle, String yTitle) throws Exception{
-		double[][] data = Calculator.toPrimitiveArray(m_data);
-		double[] xas = Calculator.toPrimitiveDouble(m_xasis);
-		String[] setTitle = toPrimitiveString(m_setTitle);
-		
-		DefaultChartDataModel model = new DefaultChartDataModel(data,
-				xas, setTitle);
-		model.setAutoScale(true);
-		DefaultChart c = new DefaultChart(model, m_title, DefaultChart.LINEAR_X_LINEAR_Y, xTitle, yTitle);
-		InterpolationChartRenderer ipr = new InterpolationChartRenderer(c.getCoordSystem(), model);
-		ipr.setRowColorModel(new RowColorModel(model));
-		c.addChartRenderer(ipr, 1);
-		c.setBounds(new Rectangle(0, 0, width, height));
-		
-		ChartEncoder.createPNG(new FileOutputStream(file), c);
-		
-		return true;
-		
-	}*/
-	
-/*	private String[] toPrimitiveString(Collection<String> input){
-		String[] result = new String[input.size()];
-		Iterator<String> it = input.iterator();
-		int i = 0;
-		while(it.hasNext()){
-			result[i] = it.next();
-			i++;
-		}
-		return result;
-	}*/
 }
