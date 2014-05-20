@@ -1,12 +1,19 @@
 package Grapher;
 
+import java.awt.List;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 
@@ -64,41 +71,106 @@ public class Main {
 		writer.close();
 	}
 	
-	public static void makeLinePNG(String[][] files, String value, String title, String file) throws Exception{
-		ArrayList<ArrayList<Vector<Double>>> results = new ArrayList<ArrayList<Vector<Double>>>();
+	public static void makeLinePNG(String[][] files, String[] testCase, String value, String title, String file) throws Exception{
+		ArrayList<TreeMap<Integer, ArrayList<Vector<Double>>>> results =
+				new ArrayList<TreeMap<Integer, ArrayList<Vector<Double>>>>();
 		Grapher g = new Grapher(title);
 		String yName = "";
-		boolean first = true;
+		
+		//PARSE INPUT FILES
 		System.out.println("=== Start parsing files ===");
 		for(int i = 0; i < files.length; i++){
-			ArrayList<Vector<Double>> tempArray = new ArrayList<Vector<Double>>();
+			TreeMap<Integer, ArrayList<Vector<Double>>> oneDir = new TreeMap<Integer, ArrayList<Vector<Double>>>();
 			for(int j = 0; j < files[i].length; j++){
-				System.out.println("Parse: " + files[i]);
+				System.out.println("Parse: " + files[i][j]);
 				Parser p = ParserFactory.getParser(value, files[i][j]);
+				yName = p.measure();
 				Vector<Double> tempResults = p.Get();
-				if(first){
-					g.SetXData(p.GetTimes());
-					yName = p.measure();
-					first = false;
+				Integer blksize = new Integer(p.GetSize());
+				if(oneDir.containsKey(blksize)){
+					oneDir.get(blksize).add(tempResults);
+				}else{
+					ArrayList<Vector<Double>> n = new ArrayList<Vector<Double>>();
+					n.add(tempResults);
+					oneDir.put(blksize, n);
 				}
-				tempArray.add(tempResults);
 			}
-			results.add(tempArray);
+			results.add(oneDir);
 		}
+		
+		//SET X DATA
+		Set<Integer> blksize = results.get(0).keySet();
+		ArrayList<Double> blksizes = new ArrayList<Double>();
+		Iterator<Integer> itTemp = blksize.iterator();
+		while(itTemp.hasNext()){
+			blksizes.add(new Double(itTemp.next().doubleValue()));
+		}
+		Collections.sort(blksizes);
+		
+		g.SetXData(blksizes);
+		
+		//CALCULATE AVG
 		System.out.println("=== Start calculator ===");
-		Iterator<ArrayList<Vector<Double>>> it = results.iterator();
+		Iterator<TreeMap<Integer, ArrayList<Vector<Double>>>> it = results.iterator();
 		int i = 0;
 		while(it.hasNext()){
-			ArrayList<Vector<Double>> tempArray = it.next();
-			int percent = i / results.size();
-			System.out.println("Calculate average (" + Integer.toString(percent) + "%)");
-			Vector<Double> aver = Calculator.Average(tempArray);
-			g.addSet("Data " + Integer.toString(i), aver);
+			TreeMap<Integer, ArrayList<Vector<Double>>> tempArray = it.next();
+			Iterator<Entry<Integer, ArrayList<Vector<Double>>>> it2 = tempArray.entrySet().iterator();
+			HashMap<Integer, Vector<Double>> newCalculated = new HashMap<Integer, Vector<Double>>();
+			while(it2.hasNext()){
+				Entry<Integer, ArrayList<Vector<Double>>> next = it2.next();
+				Vector<Double> tempResult = Calculator.Average(next.getValue());
+				newCalculated.put(next.getKey(), tempResult);
+			}
+			Vector<Double> newResults = Calculator.OtherAverage(newCalculated.values());
+			g.addSet(testCase[i], newResults);
 			i++;
 		}
+		
 		System.out.println("=== Generate Image ===");
-		String url = g.getLineChartURL(625, 470, "s", yName);
+		String url = g.getLineChartURL(625, 470, "b", yName);
 		System.out.println("=== Generated URL: " + url);
+		PrintWriter writer = new PrintWriter(file, "UTF-8");
+		writer.println(url);
+		writer.close();
+		
+		
+//		ArrayList<HashMap<Integer, ArrayList<Vector<Double>>>> results = new ArrayList<HashMap<Integer,ArrayList<Vector<Double>>>>();
+//		//TEST				SIZE	FILE		RESULTS PER SEC
+//		Grapher g = new Grapher(title);
+//		String yName = "";
+//		boolean first = true;
+//		System.out.println("=== Start parsing files ===");
+//		for(int i = 0; i < files.length; i++){
+//			ArrayList<Vector<Double>> tempArray = new  ArrayList<Vector<Double>>();
+//			for(int j = 0; j < files[i].length; j++){
+//				System.out.println("Parse: " + files[i]);
+//				Parser p = ParserFactory.getParser(value, files[i][j]);
+//				Vector<Double> tempResults = p.Get();
+//				int blksize = p.GetSize();
+//				if(first){
+//					g.SetXData(p.GetTimes());
+//					yName = p.measure();
+//					first = false;
+//				}
+//				if()
+//			}
+//			results.add(tempArray);
+//		}
+//		System.out.println("=== Start calculator ===");
+//		Iterator<HashMap<Integer, ArrayList<Vector<Double>>>> it = results.iterator();
+//		int i = 0;
+//		while(it.hasNext()){
+//			HashMap<Integer, Vector<Double>> tempArray = it.next();
+//			int percent = i / results.size();
+//			System.out.println("Calculate average (" + Integer.toString(percent) + "%)");
+//			Vector<Double> aver = Calculator.Average(tempArray);
+//			g.addSet("Data " + Integer.toString(i), aver);
+//			i++;
+//		}
+//		System.out.println("=== Generate Image ===");
+//		String url = g.getLineChartURL(625, 470, "s", yName);
+//		System.out.println("=== Generated URL: " + url);
 	}
 
 	public static void main(String[] args) {
@@ -129,8 +201,10 @@ public class Main {
 			}else{
 				int length = args.length - 3;
 				String [][] files = new String[length][];
+				String [] testCase = new String[length]; 
 				for(int i = 0; i < length; i++){
 					File dir = new File(args[3+i]);
+					testCase[i] = dir.getName();
 					File[] listOfFiles = dir.listFiles(new FileFilter() {
 						
 						@Override
@@ -145,7 +219,7 @@ public class Main {
 					}
 					files[i] = lfiles;
 				}
-				makeLinePNG(files, value, title, file);
+				makeLinePNG(files, testCase, value, title, file);
 				
 			}
 			

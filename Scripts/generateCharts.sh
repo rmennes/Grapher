@@ -3,7 +3,7 @@
 sizes=( 86 128 256 512 768 1024 1280 1448 1518)
 input_dir="Resultaten/UDP-IPV6/SERVER/SplitFiles"
 output_dir="Resultaten/UDP-IPV6/SERVER/charts/"
-types=( throughput jitter packet )
+types=( throughput jitter packet lost speed)
 
 if [ "$#" -gt 0 ]; then
 	input_dir=$1

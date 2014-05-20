@@ -31,6 +31,13 @@ public abstract class Parser {
 	
 	public abstract String measure();
 	
+	public int GetSize(){
+		JSONObject start = (JSONObject)m_data.get("start");
+		JSONObject testStart = (JSONObject)start.get("test_start");
+		Number blksize = (Number)testStart.get("blksize");
+		return blksize.intValue();
+	}
+	
 	public Vector<Double> GetTimes(){
 		return GetIntervalInfo("end");
 	}

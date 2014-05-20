@@ -29,6 +29,23 @@ public class Calculator {
 		return toVector(result);
 	}
 	
+	public static Vector<Double> OtherAverage(Collection<Vector<Double>> valueInput){
+		double[][] values = toPrimitiveArray(valueInput);
+		double[] result = new double[values.length];
+		for(int i = 0; i < result.length; i++){
+			result[i] = 0;
+		}
+		for(int i = 0; i < values.length; i++){
+			for(int j = 0; j < values[0].length; j++){
+				result[i] = result[i] + values[i][j];
+			}
+		}
+		for(int i = 0; i < result.length; i++){
+			result[i] = result[i]/(double)values.length;
+		}
+		return toVector(result);
+	}
+	
 	public static Vector<Double> Max(Collection<Vector<Double>> valuesInput){
 		double [][] values = toPrimitiveArray(valuesInput);
 		double[] result = new double[values[0].length];

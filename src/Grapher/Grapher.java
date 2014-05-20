@@ -22,7 +22,6 @@ import com.googlecode.charts4j.XYLine;
 import com.googlecode.charts4j.XYLineChart;
 
 public class Grapher {
-	final int maxCount = 10;
 	final Color[]	m_colors = {Color.GREEN, Color.TOMATO,
 			Color.GOLD};
 
@@ -70,19 +69,18 @@ public class Grapher {
 		maxX		= Double.NEGATIVE_INFINITY;
 		minX		= Double.POSITIVE_INFINITY;
 		
-		int count = 0;
 		Iterator<Double> it = xaxis.iterator();
 		while (it.hasNext()) {
-			count++;
 			Double val = it.next();
 			if (val < minX) minX = val;
 			if (val > maxX) maxX = val;
 		}
-		m_xaxis = DataUtil.scale(xaxis.subList(0, maxCount));
+		m_xaxis = DataUtil.scale(xaxis);
 	}
 	
 	public void addSet(String title, List<Double> data) throws Exception{
-		if(data.size() != m_xaxis.getSize()) throw new Exception("Size data not equal to size x_as");
+		if(data.size() != m_xaxis.getSize()) throw new Exception("Size data not equal to size x_as (" + 
+					Integer.toString(data.size()) + " != " + Integer.toString(m_xaxis.getSize()) + ")");
 		m_legends.add(title);
 		m_sets.add(data);
 		Iterator<Double> it = data.iterator();
